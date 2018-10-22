@@ -1,35 +1,39 @@
 <template>
-   <div>
+   <div class="content">
+     <button class="add-to-cart" @click="addToCart()">Add to Cart</button>
     <div class="top-row">
-      <div class="top part">
-        <img v-bind:src="availableParts.heads[0].src" title="head"/>
-        <button class="prev-selector">&#9668;</button>
-        <button class="next-selector">&#9658;</button>
-      </div>
+        <!-- <div class="robot-name">
+          {{selectedRobot.head.title}}
+          <span class="on-sale" v-if="selectedRobot.head.onSale">sale!</span>
+        </div> -->
+        <PartSelector :parts="availableParts.heads" position="top"/>
     </div>
     <div class="middle-row">
-      <div class="left part">
-        <img v-bind:src="availableParts.arms[0].src" title="left arm"/>
-        <button class="prev-selector">&#9650;</button>
-        <button class="next-selector">&#9660;</button>
-      </div>
-      <div class="center part">
-        <img v-bind:src="availableParts.torsos[0].src" title="left arm"/>
-        <button class="prev-selector">&#9668;</button>
-        <button class="next-selector">&#9658;</button>
-      </div>
-      <div class="right part">
-        <img v-bind:src="availableParts.arms[0].src" title="left arm"/>
-        <button class="prev-selector">&#9650;</button>
-        <button class="next-selector">&#9660;</button>
-      </div>
+      <PartSelector :parts="availableParts.arms" position="left"/>
+      <PartSelector :parts="availableParts.torsos" position="center"/>
+      <PartSelector :parts="availableParts.arms" position="right"/>
     </div>
     <div class="bottom-row">
-      <div class="bottom part">
-        <img v-bind:src="availableParts.bases[0].src" title="left arm"/>
-        <button class="prev-selector">&#9668;</button>
-        <button class="next-selector">&#9658;</button>
-      </div>
+      <PartSelector :parts="availableParts.bases" position="bottom"/>
+    </div>
+    <div>
+      <h1>Cart</h1>
+      <table>
+        <thead>
+          <tr>
+            <th>
+              Robot
+            </th>
+            <th class="cost">Cost</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(robot, index) in cart" :key="index">
+            <td>{{robot.head.title}}</td>
+            <td class="cost">{{robot.cost}}</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
 </template>
@@ -37,18 +41,36 @@
 
 <script>
   import availableParts from './data/parts';
+  import PartSelector from './PartSelector';
 
+  console.log(availableParts)
   export default {
     name: 'RobotBuilder',
+    components: { PartSelector },
     data() {
       return {
         availableParts,
+        cart: [],
+        selectedRobot: {
+          head: {},
+          leftArm: {},
+          torso: {},
+          rightArm: {},
+          base: {}
+        }
+      }
+    },
+    methods: {
+      addToCart() {
+        const robot = this.selectedRobot;
+        const cost = robot.head.cost + robot.leftArm.cost + robot.torso.cost + robot.rightArm.cost + robot.base.cost;
+        this.cart.push(Object.assign({}, robot, { cost }))
       }
     }
   }
 </script>
 
-<style>
+<style scoped>
   .part {
     position: relative;
     width:165px;
@@ -136,5 +158,32 @@
   }
   .right .next-selector {
     right: -3px;
+  }
+  .robot-name {
+    position: absolute;
+    top: -25px;
+    text-align: center;
+    width: 100%;
+  }
+  .on-sale {
+    color: red;
+  }
+  .content {
+    position: relative;
+  }
+  .add-to-cart {
+    position: absolute;
+    right: 30px;
+    width: 220px;
+    padding: 3px;
+    font-size: 16px;
+  }
+  td, th {
+    text-align: left;
+    padding: 5px;
+    padding-right: 20px;
+  }
+  .cost {
+    text-align: right;
   }
 </style>
