@@ -18,7 +18,19 @@
   }
 
    export default {
-    props: ['parts', 'position'],
+    props: {
+      parts: {
+        type: Array,
+        required: true
+      },
+      position: {
+        type: String,
+        required: true,
+        validator: function(value) {
+          return ['left', 'right', 'top', 'bottom', 'center'].includes(value);
+        }
+      }
+    },
     data() {
       return {
         selectedPartIndex: 0
@@ -29,12 +41,21 @@
         return this.parts[this.selectedPartIndex];
       }
     },
+    created() {
+      this.emitSelectedPart();
+    },
+    updated() {
+      this.emitSelectedPart();
+    },
     methods: {
+      emitSelectedPart() {
+        this.$emit('partSelected', this.selectedPart);
+      },
       selectNextPart() {
-        this.selectedPartIndex = validatePrevIndex(this.selectedPartIndex, this.parts.length)
+        this.selectedPartIndex = validatePrevIndex(this.selectedPartIndex, this.parts.length);
       },
       selectPrevPart() {
-        this.selectedPartIndex = validateNextIndex(this.selectedPartIndex, this.parts.length)
+        this.selectedPartIndex = validateNextIndex(this.selectedPartIndex, this.parts.length);
       }
     }
   }
