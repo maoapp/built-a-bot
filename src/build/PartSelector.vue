@@ -1,6 +1,6 @@
 <template>
   <div class="part" :class="position">
-    <img :src="selectedPart.src" title="arm"/>
+    <img :src="selectedPart.src" title="arm" @click="showPartInfo()"/>
     <button class="prev-selector" @click="selectPrevPart()"></button>
     <button @click="selectNextPart()" class="next-selector"></button>
   </div>
@@ -48,6 +48,9 @@
       this.emitSelectedPart();
     },
     methods: {
+      showPartInfo() {
+        this.$router.push({name: 'Parts', params: {id: this.selectedPart.id, partType: this.selectedPart.type}});
+      },
       emitSelectedPart() {
         this.$emit('partSelected', this.selectedPart);
       },
@@ -88,6 +91,7 @@
 }
 .part img {
   width:165px;
+  cursor: pointer;
 }
 .top {
   border-bottom: none;
